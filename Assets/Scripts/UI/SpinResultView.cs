@@ -52,10 +52,15 @@ namespace VertigoWheelDemo.UI
         private void Refresh()
         {
             totalsText.text =
-                $"Altın: {subscribedController.GetAmount(RewardType.Gold)}" +
+                $"Bölge: {subscribedController.CurrentZone}" +
+                $"    Altın: {subscribedController.GetAmount(RewardType.Gold)}" +
                 $"    Para: {subscribedController.GetAmount(RewardType.Cash)}";
 
-            if (subscribedController.IsGameOver)
+            if (subscribedController.HasCashedOut)
+            {
+                resultText.text = "Ödüllerini aldın! Oturum tamamlandı.";
+            }
+            else if (subscribedController.IsGameOver)
             {
                 resultText.text = "Bomba çıktı! Ödüller kaybedildi.";
             }
@@ -69,13 +74,13 @@ namespace VertigoWheelDemo.UI
             }
         }
 
-        private void HandleSpinResolved(WheelSlotData slot)
+        private void HandleSpinResolved(WheelSlotData slot, int earnedAmount)
         {
             if (subscribedController.IsGameOver)
                 return;
 
             resultText.text =
-                $"{slot.Reward.DisplayName} × {slot.Amount}";
+                $"{slot.Reward.DisplayName} × {earnedAmount}";
         }
     }
 }

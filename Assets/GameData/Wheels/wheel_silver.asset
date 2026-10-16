@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b27007a327914fc09fb57a0d19990c4, type: 3}
+  m_Name: wheel_silver
+  m_EditorClassIdentifier: Assembly-CSharp::VertigoWheelDemo.Data.WheelDefinition
+  baseSprite: {fileID: -4250264824657568362, guid: ca83858ec98b742a289a792dfdbf4414, type: 3}
+  indicatorSprite: {fileID: 2528496851094761378, guid: d41bafd1a006743bbb9b521be74897e8, type: 3}
+  slots:
+  - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
+    amount: 50
+  - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
+    amount: 200
+  - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
+    amount: 100
+  - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
+    amount: 500
+  - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
+    amount: 200
+  - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
+    amount: 75
+  - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
+    amount: 300
+  - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
+    amount: 150

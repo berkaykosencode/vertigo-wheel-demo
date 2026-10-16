@@ -14,12 +14,23 @@ namespace VertigoWheelDemo.Gameplay
             private set;
         }
 
+        public int CurrentZone{ get; private set; } = 1;
+
+        public bool HasCompletedSpin{ get; private set; }
+
+        public bool HasCashedOut{ get; private set; }
+
+        public bool CanCashOut =>
+                !IsGameOver &&
+                HasCompletedSpin &&
+                CurrentZone % 5 == 0;
+
         public IReadOnlyDictionary<RewardDefinition, int> Rewards => rewards;
 
-        public void ApplySpin(WheelSlotData slot)
+        public int ApplySpin(WheelSlotData slot)
         {
             if (IsGameOver)
-                return;
+                return 0;
             
             if(slot == null || slot.Reward == null)
             {
@@ -30,7 +41,7 @@ namespace VertigoWheelDemo.Gameplay
             {
                 rewards.Clear();
                 IsGameOver = true;
-                return;
+                return 0;
             }
 
             if(slot.Amount <= 0)
@@ -38,8 +49,39 @@ namespace VertigoWheelDemo.Gameplay
                 throw new ArgumentException("Amount of reward must be positive.", nameof(slot));
             }
 
+            int earnedAmount = CalculateRewardAmount(slot);
+
             rewards.TryGetValue(slot.Reward, out int previousAmount);
-            rewards[slot.Reward] = previousAmount + slot.Amount;
+            rewards[slot.Reward] = previousAmount + earnedAmount;
+
+            HasCompletedSpin = true;
+
+            return earnedAmount;
+        }
+
+        public int CalculateRewardAmount(WheelSlotData slot)
+        {
+            RewardType type = slot.Reward.Type;
+
+            if (type == RewardType.Gold || type == RewardType.Cash)
+            {
+                int bonus = slot.Amount * (CurrentZone - 1) / 10;
+                return slot.Amount + bonus;
+            }
+
+            return slot.Amount;
+        }
+
+        public void PrepareSpin()
+        {
+            if(IsGameOver)
+                return;
+
+            if (HasCompletedSpin)
+            {
+                CurrentZone++;
+                HasCompletedSpin = false;
+            }
         }
 
         public int GetAmount(RewardType type)
@@ -57,11 +99,24 @@ namespace VertigoWheelDemo.Gameplay
             return total;
         }
         
+        public bool TryCashOut()
+        {
+            if(!CanCashOut)
+                return false;
+
+            HasCashedOut = true;
+            IsGameOver = true;
+
+            return true;
+        }
 
         public void Reset()
         {
             rewards.Clear();
             IsGameOver = false;
+            HasCashedOut = false;
+            CurrentZone = 1;
+            HasCompletedSpin = false;
         }
     }
 }

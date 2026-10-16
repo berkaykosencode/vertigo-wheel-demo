@@ -11,6 +11,13 @@ namespace VertigoWheelDemo.Data
     {
         private const int RequiredSlotCount = 8;
 
+        [SerializeField] private Sprite baseSprite;
+        [SerializeField] private Sprite indicatorSprite;
+
+        public Sprite BaseSprite => baseSprite;
+        public Sprite IndicatorSprite => indicatorSprite;
+
+
         [SerializeField]
         private WheelSlotData[] slots = new WheelSlotData[RequiredSlotCount];
 

@@ -7,6 +7,7 @@
 /[Bb]uilds/
 /[Mm]emoryCaptures/
 /[Rr]ecordings/
+/.utmp/
 
 .vs/
 .vscode/

@@ -8,18 +8,28 @@ namespace VertigoWheelDemo.Gameplay
     [DisallowMultipleComponent]
     public sealed class GameSessionController : MonoBehaviour
     {
-        [SerializeField] private WheelDefinition wheelDefinition;
-        [SerializeField] private  WheelSpinView wheelSpinView;
+        [SerializeField] private WheelDefinition bronzeWheel;
+        [SerializeField] private WheelDefinition silverWheel;
+        [SerializeField] private WheelDefinition goldenWheel;
+
+        [SerializeField] private WheelSpinView wheelSpinView;
+        [SerializeField] private WheelContentView wheelContentView;
 
         private readonly GameSession session = new GameSession();
+
+        private WheelDefinition wheelDefinition;
         private WheelSpinView subscribedWheel;
 
         public event Action StateChanged;
-        public event Action<WheelSlotData> SpinResolved;
+        public event Action<WheelSlotData, int> SpinResolved;
 
         public bool IsGameOver => session.IsGameOver;
 
-        public bool CanSpin => 
+        public bool HasCashedOut => session.HasCashedOut;
+
+        public int CurrentZone => session.CurrentZone;
+
+        public bool CanSpin =>
             isActiveAndEnabled &&
             wheelDefinition != null &&
             subscribedWheel != null &&
@@ -27,13 +37,22 @@ namespace VertigoWheelDemo.Gameplay
             !subscribedWheel.IsSpinning &&
             !session.IsGameOver;
 
+        public bool CanCashOut => CanSpin && session.CanCashOut;
+
         private void OnEnable()
         {
-            if(wheelDefinition == null || wheelSpinView == null)
+            if (bronzeWheel == null ||
+                silverWheel == null ||
+                goldenWheel == null ||
+                wheelSpinView == null ||
+                wheelContentView == null)
             {
-                Debug.LogError("Oyun yöneticisinin bağlantıları eksik.", this);
+                Debug.LogError(
+                    "Oyun yöneticisinin bağlantıları eksik.", this);
                 return;
             }
+
+            wheelDefinition = GetWheelForZone(CurrentZone);
 
             subscribedWheel = wheelSpinView;
             subscribedWheel.SpinningChanged += HandleSpinningChanged;
@@ -44,12 +63,16 @@ namespace VertigoWheelDemo.Gameplay
 
         private void Start()
         {
+            if (subscribedWheel == null)
+                return;
+
+            RefreshWheel();
             StateChanged?.Invoke();
         }
 
         private void OnDisable()
         {
-            if(subscribedWheel != null)
+            if (subscribedWheel != null)
             {
                 subscribedWheel.SpinningChanged -= HandleSpinningChanged;
                 subscribedWheel.SpinCompleted -= HandleSpinCompleted;
@@ -59,37 +82,85 @@ namespace VertigoWheelDemo.Gameplay
             StateChanged?.Invoke();
         }
 
+        private WheelDefinition GetWheelForZone(int zone)
+        {
+            if (zone % 30 == 0)
+                return goldenWheel;
+
+            if (zone % 5 == 0)
+                return silverWheel;
+
+            return bronzeWheel;
+        }
+
+        private void RefreshWheel()
+        {
+            wheelDefinition = GetWheelForZone(CurrentZone);
+            int[] amounts = new int[wheelDefinition.SlotCount];
+
+            for(int i = 0; i < wheelDefinition.SlotCount; i++)
+            {
+                WheelSlotData slot = wheelDefinition.GetSlot(i);
+
+                if(slot == null || slot.Reward == null)
+                {
+                    Debug.LogError($"Slot {i} bağlantısı eksik.", this);
+                    return;
+                }
+
+                amounts[i] = session.CalculateRewardAmount(slot);
+            }
+            
+            wheelContentView.SetDefinition(wheelDefinition, amounts);
+        }
+
         public void RequestSpin()
         {
-            if(!CanSpin)
+            if (!CanSpin)
                 return;
-            
-            int slotIndex = UnityEngine.Random.Range(0, wheelDefinition.SlotCount);
+
+            session.PrepareSpin();
+            RefreshWheel();
+
+            int slotIndex = UnityEngine.Random.Range(
+                0, wheelDefinition.SlotCount);
 
             subscribedWheel.SpinToSlot(slotIndex);
         }
 
-        private void HandleSpinningChanged(bool IsSpinning)
+        public void RequestCashOut()
+        {
+            if(!CanCashOut)
+                return;
+            
+            if(!session.TryCashOut())
+                return;
+            
+            StateChanged?.Invoke();
+        }
+
+        private void HandleSpinningChanged(bool isSpinning)
         {
             StateChanged?.Invoke();
         }
-        
+
         private void HandleSpinCompleted(int slotIndex)
         {
-            if(session.IsGameOver)
+            if (session.IsGameOver)
                 return;
-            
+
             WheelSlotData slot = wheelDefinition.GetSlot(slotIndex);
-            session.ApplySpin(slot);
+            int earnedAmount = session.ApplySpin(slot);
 
             StateChanged?.Invoke();
-            SpinResolved?.Invoke(slot);
+            SpinResolved?.Invoke(slot, earnedAmount);
 
             Debug.Log(
-                $"Altın: {GetAmount(RewardType.Gold)}" +
-                $"Para: {GetAmount(RewardType.Cash)}" +
-                $"Oyun Bitti!: {IsGameOver}"
-                , this);
+                $"Bölge: {CurrentZone} | " +
+                $"Altın: {GetAmount(RewardType.Gold)} | " +
+                $"Para: {GetAmount(RewardType.Cash)} | " +
+                $"Oyun bitti: {IsGameOver}",
+                this);
         }
 
         public int GetAmount(RewardType type)
@@ -100,15 +171,17 @@ namespace VertigoWheelDemo.Gameplay
         [ContextMenu("Reset Session")]
         public void ResetSession()
         {
-            if(!Application.isPlaying)
+            if (!Application.isPlaying || subscribedWheel == null)
                 return;
-            
-            if(subscribedWheel != null && subscribedWheel.IsSpinning)
+
+            if (subscribedWheel.IsSpinning)
                 return;
 
             session.Reset();
+            RefreshWheel();
+
             StateChanged?.Invoke();
-            Debug.Log("New session started.", this);
+            Debug.Log("Yeni oturum başladı.", this);
         }
     }
 }
