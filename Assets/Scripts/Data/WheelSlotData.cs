@@ -11,5 +11,13 @@ namespace VertigoWheelDemo.Data
 
         public RewardDefinition Reward => reward;
         public int Amount => amount; 
+
+        public WheelSlotData() { }
+
+        public WheelSlotData(RewardDefinition reward, int amount)
+        {
+            this.reward = reward;
+            this.amount = amount;
+        }
     }
 }

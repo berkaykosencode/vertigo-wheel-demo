@@ -12,22 +12,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b27007a327914fc09fb57a0d19990c4, type: 3}
   m_Name: wheel_golden
   m_EditorClassIdentifier: Assembly-CSharp::VertigoWheelDemo.Data.WheelDefinition
-  baseSprite: {fileID: 5770997025872212153, guid: b3bb393304c0d493d8c6207f08defe57, type: 3}
-  indicatorSprite: {fileID: 8294000708589155680, guid: 5f2f48e3429e44a1c87fa54aa085b7b4, type: 3}
+  baseSprite: {fileID: 21300000, guid: b3bb393304c0d493d8c6207f08defe57, type: 3}
+  indicatorSprite: {fileID: 21300000, guid: 5f2f48e3429e44a1c87fa54aa085b7b4, type: 3}
   slots:
-  - reward: {fileID: 11400000, guid: dc4f1519d0d7f4ec69112f7ca2268787, type: 2}
-    amount: 1
-  - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
-    amount: 200
   - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
-    amount: 100
+    amount: 1000
   - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
-    amount: 500
+    amount: 2500
   - reward: {fileID: 11400000, guid: 2a0f07220f6b44682ae85df6ef9844f1, type: 2}
-    amount: 1
+    amount: 4
+  - reward: {fileID: 11400000, guid: 86ef4a26bc123464098589a121a7d232, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: 1e06c555d3d8448d9814dcafef897d72, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: 836a357df6a234dd891f1604e057ea7e, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: dabfc3e4095bb49d99a379f3b0805c2e, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: 5acdd451b12e040a2ad92ed002f4690b, type: 2}
+    amount: 4
+  rewardPool:
   - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
-    amount: 75
+    amount: 1000
   - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
-    amount: 300
-  - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
-    amount: 150
+    amount: 2500
+  - reward: {fileID: 11400000, guid: 2a0f07220f6b44682ae85df6ef9844f1, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: 86ef4a26bc123464098589a121a7d232, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: 1e06c555d3d8448d9814dcafef897d72, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: 836a357df6a234dd891f1604e057ea7e, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: dabfc3e4095bb49d99a379f3b0805c2e, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: 5acdd451b12e040a2ad92ed002f4690b, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: e25ec846cbb4f46c39f63e04f4236427, type: 2}
+    amount: 4
+  - reward: {fileID: 11400000, guid: 0f28e6b5b5c02449eb6c44c50eb9f1d3, type: 2}
+    amount: 4

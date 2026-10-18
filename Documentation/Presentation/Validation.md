@@ -1,0 +1,45 @@
+# Presentation validation
+
+Unity 6000.3.23f1. Executed in Play mode against the scene prefab and actual UI components. Captures use a temporary camera render target; no APK was built. Editor checks set up specific zones and outcomes without changing the shipped game rules.
+
+- PASS: Scene starts ready to spin
+- PASS: Spin button is centered on the wheel and has a separate non-rotating transform
+- PASS: bronze produces varied eight-slot layouts with distinct rewards and correct bomb count
+- PASS: bronze pool entries are all reachable
+- PASS: silver produces varied eight-slot layouts with distinct rewards and correct bomb count
+- PASS: silver pool entries are all reachable
+- PASS: golden produces varied eight-slot layouts with distinct rewards and correct bomb count
+- PASS: golden pool entries are all reachable
+- PASS: All 36 supplied reward sprites, including the bomb, participate in the configured pools
+- PASS: Silver and golden currency bases improve strictly by tier
+- PASS: Inline reward totals have been replaced by the bank
+- PASS: Bank blocks gameplay while open
+- PASS: Empty bank shows its empty state
+- PASS: Closing bank restores gameplay
+- PASS: Spin locks repeat spins and cash-out
+- PASS: Reward reveal holds the winning zone and locks input
+- PASS: The displayed slot amount equals the awarded bank amount
+- PASS: Reveal displays the actual won reward icon
+- PASS: Dismissing a reward starts a locked carousel transition
+- PASS: Bank, reset and repeat-spin requests cannot interrupt a transition
+- PASS: Current wheel slides left and shrinks while the next wheel grows toward the center
+- PASS: Carousel animation leaves the center button layout fixed
+- PASS: A single dismiss advances exactly one zone
+- PASS: Carousel completes with restored poses and unlocked gameplay
+- PASS: Next-wheel preview becomes the exact playable wheel
+- PASS: Repeated dismissal cannot skip zones
+- PASS: New wheel starts with the same orientation as its preview
+- PASS: Bank renders the won reward as an icon/name/quantity row
+- PASS: Zone 5 uses a bomb-free silver wheel and permits cash-out before spinning
+- PASS: Cash-out ends the session and retains its bank
+- PASS: Restart clears the bank and restores zone 1
+- PASS: Super zone 30 prioritizes golden over silver
+- PASS: Golden wheel has no bomb
+- PASS: Golden wheel offers six premium items alongside its two improved currency rewards
+- PASS: Bank accommodates all 35 non-bomb reward types with scrolling
+- PASS: Bomb clears every reward type and displays a blocking result
+- PASS: Restart appears after dismissing bomb result
+- PASS: Restart after bomb restores an empty, playable run
+- PASS: A subsequent successful spin starts another transition
+- PASS: Disabling the animation completes its pending advance and restores input and poses
+- PASS: No runtime errors or exceptions during the validation run

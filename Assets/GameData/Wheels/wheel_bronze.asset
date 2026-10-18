@@ -16,18 +16,55 @@ MonoBehaviour:
   indicatorSprite: {fileID: 21300000, guid: 7981c8537977b4773b4b492954b0cefc, type: 3}
   slots:
   - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
-    amount: 50
+    amount: 75
   - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
     amount: 200
-  - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
-    amount: 100
-  - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
-    amount: 500
+  - reward: {fileID: 11400000, guid: 8a6e5be97b30c43b1aaf61f47b33dd28, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: ea02b97ab939d470386634d09d8e6c49, type: 2}
+    amount: 5
   - reward: {fileID: 11400000, guid: c325b78915f074752bf3bbdbb46c9532, type: 2}
     amount: 0
+  - reward: {fileID: 11400000, guid: 003b72793cb7e43d1b9f2d731f9e2972, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: 44b56ff609fbd43009da41b01537677e, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: 6e73dac4f4f404eae8bed64d854f0e30, type: 2}
+    amount: 5
+  rewardPool:
   - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
     amount: 75
   - reward: {fileID: 11400000, guid: 77dd1827deba84b348d3e2a52fad8091, type: 2}
-    amount: 300
-  - reward: {fileID: 11400000, guid: 7f8db459a482b46deb678e233647a75b, type: 2}
-    amount: 150
+    amount: 200
+  - reward: {fileID: 11400000, guid: 8a6e5be97b30c43b1aaf61f47b33dd28, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: ea02b97ab939d470386634d09d8e6c49, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: d0408e8b061434ca7bde319a0c1c5d3a, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: 003b72793cb7e43d1b9f2d731f9e2972, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: 44b56ff609fbd43009da41b01537677e, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: 6e73dac4f4f404eae8bed64d854f0e30, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: 953a4c713859e4547abb8214316d4f36, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: 779f9b1d7db5640928d4f533ad0f9889, type: 2}
+    amount: 5
+  - reward: {fileID: 11400000, guid: b00205e498ffa417b9c5815e6e4d027f, type: 2}
+    amount: 1
+  - reward: {fileID: 11400000, guid: 6dfbb36d735ef43b1872f1e4dea32b7c, type: 2}
+    amount: 1
+  - reward: {fileID: 11400000, guid: b33cdcffe2ed34e6fb29b269feed21ac, type: 2}
+    amount: 1
+  - reward: {fileID: 11400000, guid: 5817969e60c8a4f759912b09672cabf1, type: 2}
+    amount: 1
+  - reward: {fileID: 11400000, guid: 02dbb61d798fa44d88c9668f96eb31fe, type: 2}
+    amount: 1
+  - reward: {fileID: 11400000, guid: deca6955997014f4992b147ecbd82acf, type: 2}
+    amount: 1
+  - reward: {fileID: 11400000, guid: 450212fee2d224a97aacf7c590ee2e62, type: 2}
+    amount: 1
+  - reward: {fileID: 11400000, guid: 7a42ab953d3ff40b78357a760375ed85, type: 2}
+    amount: 1

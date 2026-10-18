@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: reward_rifle
   m_EditorClassIdentifier: Assembly-CSharp::VertigoWheelDemo.Data.RewardDefinition
   rewardId: rifle
-  displayName: "T\xFCfek"
+  displayName: "\xD6zel t\xFCfek"
   rewardType: 2
-  icon: {fileID: 795073897822961988, guid: 41434d8d743b24f0db7155d18dc814b5, type: 3}
+  icon: {fileID: 21300000, guid: 41434d8d743b24f0db7155d18dc814b5, type: 3}

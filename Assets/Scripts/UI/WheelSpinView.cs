@@ -32,6 +32,12 @@ namespace VertigoWheelDemo.UI
             fullTurns = Mathf.Max(1, fullTurns);
         }
 
+        public void ResetPose()
+        {
+            if (!IsSpinning)
+                wheelTransform.localRotation = Quaternion.identity;
+        }
+
         // The caller selects the result; this view only animates it.
         public void SpinToSlot(int slotIndex)
         {

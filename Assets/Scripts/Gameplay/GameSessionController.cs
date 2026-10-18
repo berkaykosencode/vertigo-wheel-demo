@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VertigoWheelDemo.Data;
 using VertigoWheelDemo.UI;
@@ -19,9 +20,29 @@ namespace VertigoWheelDemo.Gameplay
 
         private WheelDefinition wheelDefinition;
         private WheelSpinView subscribedWheel;
+        private readonly WheelRewardSelector rewardSelector = new WheelRewardSelector(new System.Random());
+        private WheelSlotData[] currentSlots;
+        private WheelSlotData[] nextSlots;
+        private WheelSlotData[] previousSlots;
+        private WheelDefinition previousDefinition;
+        private bool transitionCommitted;
+
+        public bool IsRewardPending { get; private set; }
+        public bool IsBankOpen { get; private set; }
+        public bool IsTransitioning { get; private set; }
+        public float PreviousWheelAngle { get; private set; }
+        public bool IsSpinning => subscribedWheel != null && subscribedWheel.IsSpinning;
+        public IReadOnlyDictionary<RewardDefinition, int> Rewards => session.Rewards;
+        public WheelDefinition CurrentDefinition => wheelDefinition;
+        public WheelDefinition PreviousDefinition => previousDefinition;
+        public WheelDefinition NextDefinition => GetWheelForZone(CurrentZone + 1);
+        public WheelSlotData[] CurrentSlots => currentSlots;
+        public WheelSlotData[] PreviousSlots => previousSlots;
+        public WheelSlotData[] NextSlots => nextSlots;
 
         public event Action StateChanged;
         public event Action<WheelSlotData, int> SpinResolved;
+        public event Action ZoneTransitionRequested;
 
         public bool IsGameOver => session.IsGameOver;
 
@@ -35,7 +56,8 @@ namespace VertigoWheelDemo.Gameplay
             subscribedWheel != null &&
             subscribedWheel.isActiveAndEnabled &&
             !subscribedWheel.IsSpinning &&
-            !session.IsGameOver;
+            !session.IsGameOver &&
+            !IsRewardPending && !IsBankOpen && !IsTransitioning;
 
         public bool CanCashOut => CanSpin && session.CanCashOut;
 
@@ -53,6 +75,8 @@ namespace VertigoWheelDemo.Gameplay
             }
 
             wheelDefinition = GetWheelForZone(CurrentZone);
+            if (currentSlots == null)
+                PrepareLayouts();
 
             subscribedWheel = wheelSpinView;
             subscribedWheel.SpinningChanged += HandleSpinningChanged;
@@ -72,6 +96,7 @@ namespace VertigoWheelDemo.Gameplay
 
         private void OnDisable()
         {
+            CompleteZoneTransition();
             if (subscribedWheel != null)
             {
                 subscribedWheel.SpinningChanged -= HandleSpinningChanged;
@@ -93,14 +118,20 @@ namespace VertigoWheelDemo.Gameplay
             return bronzeWheel;
         }
 
-        private void RefreshWheel()
+        private void PrepareLayouts()
         {
             wheelDefinition = GetWheelForZone(CurrentZone);
+            currentSlots = rewardSelector.Select(wheelDefinition);
+            nextSlots = rewardSelector.Select(NextDefinition);
+        }
+
+        private void RefreshWheel()
+        {
             int[] amounts = new int[wheelDefinition.SlotCount];
 
             for(int i = 0; i < wheelDefinition.SlotCount; i++)
             {
-                WheelSlotData slot = wheelDefinition.GetSlot(i);
+                WheelSlotData slot = currentSlots[i];
 
                 if(slot == null || slot.Reward == null)
                 {
@@ -111,7 +142,7 @@ namespace VertigoWheelDemo.Gameplay
                 amounts[i] = session.CalculateRewardAmount(slot);
             }
             
-            wheelContentView.SetDefinition(wheelDefinition, amounts);
+            wheelContentView.SetDefinition(wheelDefinition, currentSlots, amounts);
         }
 
         public void RequestSpin()
@@ -119,7 +150,6 @@ namespace VertigoWheelDemo.Gameplay
             if (!CanSpin)
                 return;
 
-            session.PrepareSpin();
             RefreshWheel();
 
             int slotIndex = UnityEngine.Random.Range(
@@ -149,18 +179,86 @@ namespace VertigoWheelDemo.Gameplay
             if (session.IsGameOver)
                 return;
 
-            WheelSlotData slot = wheelDefinition.GetSlot(slotIndex);
+            int completedZone = CurrentZone;
+
+            WheelSlotData slot = currentSlots[slotIndex];
             int earnedAmount = session.ApplySpin(slot);
 
+            IsRewardPending = true;
             StateChanged?.Invoke();
             SpinResolved?.Invoke(slot, earnedAmount);
 
             Debug.Log(
-                $"Bölge: {CurrentZone} | " +
+                $"Sonuçlanan bölge: {completedZone} | " +
+                $"Aktif Bölge: {CurrentZone} | " +
                 $"Altın: {GetAmount(RewardType.Gold)} | " +
                 $"Para: {GetAmount(RewardType.Cash)} | " +
                 $"Oyun bitti: {IsGameOver}",
                 this);
+        }
+
+        // The result stays on its winning slot until the player dismisses the reveal.
+        public void AcknowledgeReward()
+        {
+            if (!IsRewardPending)
+                return;
+
+            IsRewardPending = false;
+            if (!session.IsGameOver)
+            {
+                if (ZoneTransitionRequested != null)
+                {
+                    IsTransitioning = true;
+                    transitionCommitted = false;
+                    StateChanged?.Invoke();
+                    ZoneTransitionRequested.Invoke();
+                    return;
+                }
+                AdvanceZone();
+            }
+            StateChanged?.Invoke();
+        }
+
+        // Swap the content when the moving preview reaches the center.
+        public void CommitZoneTransition()
+        {
+            if (!IsTransitioning || transitionCommitted)
+                return;
+            transitionCommitted = true;
+            AdvanceZone();
+            StateChanged?.Invoke();
+        }
+
+        // Also used on disable, so an interrupted animation cannot leave input locked.
+        public void CompleteZoneTransition()
+        {
+            if (!IsTransitioning)
+                return;
+            CommitZoneTransition();
+            IsTransitioning = false;
+            transitionCommitted = false;
+            StateChanged?.Invoke();
+        }
+
+        private void AdvanceZone()
+        {
+            PreviousWheelAngle = wheelSpinView.transform.localEulerAngles.z;
+            previousDefinition = wheelDefinition;
+            previousSlots = currentSlots;
+            session.PrepareSpin();
+            wheelDefinition = GetWheelForZone(CurrentZone);
+            currentSlots = nextSlots;
+            nextSlots = rewardSelector.Select(NextDefinition);
+            subscribedWheel?.ResetPose();
+            RefreshWheel();
+        }
+
+        public void SetBankOpen(bool open)
+        {
+            if (open && (IsSpinning || IsRewardPending || IsTransitioning))
+                return;
+            IsBankOpen = open;
+            StateChanged?.Invoke();
         }
 
         public int GetAmount(RewardType type)
@@ -174,10 +272,15 @@ namespace VertigoWheelDemo.Gameplay
             if (!Application.isPlaying || subscribedWheel == null)
                 return;
 
-            if (subscribedWheel.IsSpinning)
+            if (subscribedWheel.IsSpinning || IsRewardPending || IsBankOpen || IsTransitioning)
                 return;
 
             session.Reset();
+            previousDefinition = null;
+            previousSlots = null;
+            PreviousWheelAngle = 0;
+            PrepareLayouts();
+            subscribedWheel.ResetPose();
             RefreshWheel();
 
             StateChanged?.Invoke();

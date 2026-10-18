@@ -60,7 +60,8 @@ namespace VertigoWheelDemo.UI
             restartButton.interactable =
                 subscribedController != null &&
                 subscribedController.isActiveAndEnabled &&
-                subscribedController.IsGameOver;
+                subscribedController.IsGameOver &&
+                !subscribedController.IsRewardPending && !subscribedController.IsBankOpen && !subscribedController.IsTransitioning;
         }   
     }
 }

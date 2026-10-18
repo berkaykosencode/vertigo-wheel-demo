@@ -6,11 +6,20 @@ A Unity wheel-of-fortune game developed for the Vertigo Games internship case.
 
 **Target platform:** Android, ARM64, landscape
 
-**Status:** Working prototype. An initial APK has been tested in an Android emulator; final polish and submission materials are still in progress.
+**Status:** Playable demo with the redesigned wheel interface, randomized reward pools, a session bank, and reward reveals. The latest presentation is validated in the Unity Editor; the Android test APK predates this redesign.
+
+![Wheel interface](Documentation/Presentation/adjacent-wheels.png)
 
 ## Implemented
 
-- [x] Eight-slot wheel with DOTween spin animation and input locking during a spin.
+- [x] Eight-slot wheel with DOTween spin animation, a fixed center spin button, and input locking during spins and modal windows.
+- [x] Previous and next wheel previews; the next preview becomes the exact next playable layout.
+- [x] Smooth 0.74-second carousel transitions with slide/scale/fade animation, fixed button layout, and input locking until completion.
+- [x] Dark gradient background with resolution-independent decorative geometry.
+- [x] All 35 supplied non-bomb reward icons configured as obtainable rewards, plus the bomb.
+- [x] Randomized, distinct slot rewards selected once per zone, with stronger silver and premium golden pools.
+- [x] Scrollable session bank with reward icons, names, and quantities.
+- [x] One-tap reward reveals with the supplied star flash/glow artwork and DOTween animations.
 - [x] Editor-configurable rewards, slot amounts, wheel sprites, and indicators using ScriptableObjects.
 - [x] Zone progression with bronze wheels in normal zones.
 - [x] Bomb-free silver wheels at every fifth zone.
@@ -28,10 +37,11 @@ A Unity wheel-of-fortune game developed for the Vertigo Games internship case.
 
 ## Gameplay
 
-- **ÇEVİR / Spin:** Spin the current wheel. After a successful spin, the next press advances to the next zone and spins again.
+- **SPIN (center button):** Spin the current wheel. A result overlay displays the actual reward icon and quantity; tap anywhere to dismiss it and prepare the next zone. The wheel contents stay fixed while making a decision.
 - Normal zones contain one bomb. Landing on it loses all rewards accumulated in the current session.
 - Every fifth zone uses a safe silver wheel; every thirtieth zone uses a golden wheel with special rewards. Neither contains a bomb.
-- **ÖDÜLLERİ AL / Collect rewards:** End the session successfully while keeping its reward totals visible. In the current implementation, this becomes available after completing a spin in a safe or super zone, while the wheel is idle.
+- **BANKA / Bank:** Inspect every reward accumulated in the current session. The bank scrolls when the list is long. Opening it pauses gameplay input.
+- **ÖDÜLLERİ AL / Collect rewards:** End the session successfully while keeping its bank available for inspection. This is available on entering a safe or super zone, before spinning it, while the wheel is idle and no modal is open.
 - **YENİDEN BAŞLAT / Restart:** After a bomb or a successful cash-out, start a new session at zone 1 with empty reward totals.
 
 Rewards are held in memory for the current session; they are not saved between application launches.
@@ -57,6 +67,17 @@ This growth formula is a game-design choice; the case brief requires improving r
 
 Reward definitions are in `Assets/GameData/Rewards`, and wheel configurations are in `Assets/GameData/Wheels`.
 
+Each wheel has an optional **Reward Pool**. When populated, the selector draws distinct rewards without replacement, always includes both configured currencies, and preserves exactly one bomb for a normal wheel. Silver and golden templates contain no bomb. An empty pool uses the eight manually configured **Slots** unchanged. This keeps both random and fixed layouts editable in the Editor.
+
+| Base reward | Bronze | Silver | Golden |
+| --- | ---: | ---: | ---: |
+| Gold | 75 | 300 | 1,000 |
+| Cash | 200 | 800 | 2,500 |
+| Upgrade points | 5 | 20 | Not in golden pool |
+| Item quantity | 1 | 2 | 4 |
+
+The golden pool contains premium items only: elite weapons, gold/super chests, the special helmet, and event bayonets. Currency amounts also use the zone growth formula above. These balance values are design choices, not numerical requirements from the brief.
+
 ## Build for Android
 
 1. Install **Android Build Support**, **Android SDK & NDK Tools**, and **OpenJDK** for this Editor version through Unity Hub.
@@ -71,17 +92,18 @@ Generated build files are ignored by Git. The final APK will be attached to a Gi
 
 ## Validation and remaining work
 
-An initial APK was manually smoke-tested in an Android 16 / API 36 ARM64 emulator. The application launched in landscape, displayed the game UI, and ran the wheel interaction. Editor layout checks include 4:3; final captures and regression checks across all required ratios remain pending.
+The new interface has been exercised in **Unity 6000.3.23f1 Play mode** using the scene prefab and actual UI components. Validation covers reward variety/reachability, tier improvements, preview continuity, modal input locking, bank scrolling, correct payout, cash-out, bomb loss, and restart. See [the validation report](Documentation/Presentation/Validation.md).
 
-**The existing test APK predates the latest upright-icon and amount-label rotation fix.** It has not been rebuilt with that change yet.
+The Editor tool **Tools > Vertigo > Validate Presentation** reruns those checks and captures UI states. It temporarily sets specific zones/outcomes for testing; these test controls are Editor-only and are not included in the APK. Captures at **20:9, 16:9, and 4:3** are in [Documentation/Presentation](Documentation/Presentation). A walkthrough of the architecture and new functions is available in [Turkish](Documentation/Implementation-TR.md).
 
-- [ ] Review cash-out timing against the brief: the current flow requires completing the safe/super-zone spin before collecting rewards.
-- [ ] Finish UI polish, feedback effects, and animations.
-- [ ] Complete a final regression pass for normal/safe/super zones, reward growth, bombs, cash-out, restart, and repeated button presses.
-- [ ] Verify the finished UI and capture screenshots at **20:9, 16:9, and 4:3**.
+**The existing test APK predates this redesign.** An earlier APK was manually smoke-tested in an Android 16 / API 36 ARM64 emulator; that does not validate the new interface on Android.
+
+- [x] Correct cash-out timing: enter a safe/super zone, then collect before spinning.
+- [x] Implement the supplied reward artwork, center spin button, adjacent wheel previews, bank, and one-tap result presentation.
+- [x] Validate the new gameplay/UI flows in Play mode and inspect captures at all required ratios.
 - [ ] Rebuild the APK with the final source and repeat Android testing, including a physical device if available.
 - [ ] Record a gameplay video covering the main flows.
-- [ ] Publish the final APK as a **GitHub Release** and add the release, video, and screenshots to this README.
+- [ ] Publish the final APK as a **GitHub Release** and add release/video links here.
 
 ## Project layout
 
@@ -94,6 +116,8 @@ Assets/
   Prefabs/            Reusable game prefab
   Scenes/             WheelDemo scene
   Scripts/Data/       Reward and wheel definitions
-  Scripts/Gameplay/   Session rules and controller
-  Scripts/UI/         Wheel, buttons, and result presentation
+  Scripts/Gameplay/   Session rules, reward selection, and controller
+  Scripts/UI/         Wheel, previews, buttons, bank, and result presentation
+  Editor/             Prefab construction and Play-mode presentation checks
+Documentation/        Validation report, captures, and implementation walkthrough
 ```

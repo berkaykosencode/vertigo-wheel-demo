@@ -17,6 +17,7 @@ namespace VertigoWheelDemo.UI
 
         private Image wheelImage;
         private int[] rewardAmounts;
+        private WheelSlotData[] displayedSlots;
 
         private void Awake()
         {
@@ -45,7 +46,16 @@ namespace VertigoWheelDemo.UI
             WheelDefinition definition,
             int[] amounts)
         {
+            var slots = new WheelSlotData[definition.SlotCount];
+            for (int i = 0; i < slots.Length; i++)
+                slots[i] = definition.GetSlot(i);
+            SetDefinition(definition, slots, amounts);
+        }
+
+        public void SetDefinition(WheelDefinition definition, WheelSlotData[] slots, int[] amounts)
+        {
             wheelDefinition = definition;
+            displayedSlots = slots;
             rewardAmounts = amounts;
             Refresh();
         }
@@ -78,7 +88,7 @@ namespace VertigoWheelDemo.UI
 
             for (int i = 0; i < slotCount; i++)
             {
-                WheelSlotData slot = wheelDefinition.GetSlot(i);
+                WheelSlotData slot = displayedSlots[i];
 
                 if (rewardImages[i] == null ||
                     rewardAmountTexts[i] == null ||

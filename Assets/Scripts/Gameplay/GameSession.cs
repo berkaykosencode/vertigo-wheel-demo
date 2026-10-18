@@ -22,7 +22,6 @@ namespace VertigoWheelDemo.Gameplay
 
         public bool CanCashOut =>
                 !IsGameOver &&
-                HasCompletedSpin &&
                 CurrentZone % 5 == 0;
 
         public IReadOnlyDictionary<RewardDefinition, int> Rewards => rewards;
@@ -61,11 +60,16 @@ namespace VertigoWheelDemo.Gameplay
 
         public int CalculateRewardAmount(WheelSlotData slot)
         {
+            return CalculateRewardAmount(slot, CurrentZone);
+        }
+
+        public static int CalculateRewardAmount(WheelSlotData slot, int zone)
+        {
             RewardType type = slot.Reward.Type;
 
             if (type == RewardType.Gold || type == RewardType.Cash)
             {
-                int bonus = slot.Amount * (CurrentZone - 1) / 10;
+                int bonus = slot.Amount * (zone - 1) / 10;
                 return slot.Amount + bonus;
             }
 

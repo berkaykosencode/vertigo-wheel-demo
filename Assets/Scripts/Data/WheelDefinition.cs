@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace VertigoWheelDemo.Data
@@ -20,6 +21,12 @@ namespace VertigoWheelDemo.Data
 
         [SerializeField]
         private WheelSlotData[] slots = new WheelSlotData[RequiredSlotCount];
+
+        // Leave the pool empty to use the eight explicitly configured slots.
+        [Tooltip("Optional randomized reward pool. Leave empty to play the eight configured Slots exactly. The Slots still determine whether this wheel includes a bomb.")]
+        [SerializeField] private WheelSlotData[] rewardPool = Array.Empty<WheelSlotData>();
+
+        public IReadOnlyList<WheelSlotData> RewardPool => rewardPool;
 
         public int SlotCount => slots.Length;
 
