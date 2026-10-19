@@ -13,9 +13,11 @@ namespace VertigoWheelDemo.UI
 
         [SerializeField, Min(0.1f)] private float spinDuration = 3f;
         [SerializeField, Min(1)] private int fullTurns = 4;
+        [SerializeField, Min(0f)] private float idleRotationSpeed = 6f;
 
         private RectTransform wheelTransform;
         private Tween spinTween;
+        private bool idleRotationEnabled;
 
         public bool IsSpinning => spinTween != null && spinTween.IsActive();
         public event Action<bool> SpinningChanged;
@@ -30,6 +32,18 @@ namespace VertigoWheelDemo.UI
         {
             spinDuration = Mathf.Max(0.1f, spinDuration);
             fullTurns = Mathf.Max(1, fullTurns);
+            idleRotationSpeed = Mathf.Max(0f, idleRotationSpeed);
+        }
+
+        public void SetIdleRotation(bool enabled)
+        {
+            idleRotationEnabled = enabled;
+        }
+
+        private void Update()
+        {
+            if (idleRotationEnabled && !IsSpinning)
+                wheelTransform.Rotate(0f, 0f, -idleRotationSpeed * Time.deltaTime);
         }
 
         public void ResetPose()

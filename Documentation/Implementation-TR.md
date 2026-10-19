@@ -22,6 +22,12 @@ Ekrana tek dokunuş `Dismiss` fonksiyonunu çağırır. Bu fonksiyon pencereyi k
 
 Geçiş sırasında çevirme, banka, çıkış ve yeniden başlatma istekleri reddedilir. Tekrarlanan kapatma çağrısı bölge atlatamaz. Animasyon bileşeni devre dışı kalırsa geçiş güvenle tamamlanır ve görsel konumlar geri yüklenir; oyun kilitli kalmaz.
 
+## Boşta çark hareketi
+
+Aktif çark ve görünen önceki/sonraki çarklar, oyuncu karar verirken yerlerinde saniyede 6 derece saat yönünde döner. `WheelHudView`, `CanSpin` durumuna göre üç görünümdeki `SetIdleRotation` iznini birlikte yönetir. Gerçek çevirme, ödül bildirimi, banka ve bölge geçişi sırasında boşta hareket durur; sonuç gösterilirken kazanan dilim sabit kalır. Oturum bitince de bu hareket kapalıdır. Hız, çark bileşenlerinin Inspector'daki `Idle Rotation Speed` alanından değiştirilebilir.
+
+Yalnızca çarkın kendi görseli döner; konum, gösterge, bölge etiketi ve merkez düğmesi değişmez. `LateUpdate` içindeki ters rotasyon ikonları ve onların altındaki miktarları düz tutar. `WheelPreviewView.Show`, aynı tanım/dizi/bölge tekrar gönderildiğinde mevcut açıyı korur; sıradan HUD yenilemeleri önizlemeyi başa sarmaz. Sağ önizleme merkeze büyürken açısı aynı geçiş süresinde sıfıra yumuşakça hizalanır; içerik devredilince ani bir açı sıçraması oluşmaz.
+
 ## Banka
 
 `BankView.Open` oturumun Rewards sözlüğünü okur. Her farklı ödül için bir `BankRewardRowView` oluşturur veya önceden oluşturduğu satırı tekrar kullanır. Satırda ikon, isim ve miktar bulunur. Aynı ödül tekrar kazanılırsa mevcut kaydın miktarı artar.

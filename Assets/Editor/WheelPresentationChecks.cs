@@ -118,6 +118,23 @@ namespace VertigoWheelDemo.Editor
             Assert(!spinRect.IsChildOf(wheelRect) && Vector3.Distance(spinRect.position, wheelRect.position) < 0.1f,
                 "Spin button is centered on the wheel and has a separate non-rotating transform");
 
+            var hud = Object.FindFirstObjectByType<WheelHudView>();
+            var previousPreview = (WheelPreviewView)Get(hud, "previousWheel");
+            var nextPreview = (WheelPreviewView)Get(hud, "nextWheel");
+            float idleStart = wheelRect.localEulerAngles.z;
+            float nextIdleStart = nextPreview.WheelTransform.localEulerAngles.z;
+            yield return 0.3f;
+            Assert(Mathf.Abs(Mathf.DeltaAngle(idleStart, wheelRect.localEulerAngles.z)) > 0.25f &&
+                Mathf.Abs(Mathf.DeltaAngle(nextIdleStart, nextPreview.WheelTransform.localEulerAngles.z)) > 0.25f,
+                "Ready current and next wheels rotate gently in place");
+            Assert(spinRect.localRotation == Quaternion.identity && wheelRect.anchoredPosition == Vector2.zero &&
+                nextPreview.AnimatedVisual.anchoredPosition == Vector2.zero,
+                "Idle rotation leaves wheel positions and the center button fixed");
+            float beforeRefresh = nextPreview.WheelTransform.localEulerAngles.z;
+            Call(controller, "HandleSpinningChanged", false);
+            Assert(Mathf.Abs(Mathf.DeltaAngle(beforeRefresh, nextPreview.WheelTransform.localEulerAngles.z)) < 0.01f,
+                "Refreshing the HUD preserves an unchanged preview's idle angle");
+
             var allRewards = new HashSet<RewardDefinition>();
             foreach (string tier in new[] { "bronze", "silver", "golden" })
             {
@@ -148,10 +165,15 @@ namespace VertigoWheelDemo.Editor
             Capture("gameplay-20x9", 2400, 1080);
             Capture("gameplay-4x3", 1440, 1080);
             Assert(Find("ui_text_totals_value") == null, "Inline reward totals have been replaced by the bank");
+            float bankIdleAngle = wheelRect.localEulerAngles.z;
+            float bankPreviewAngle = nextPreview.WheelTransform.localEulerAngles.z;
             openBank.onClick.Invoke();
             yield return 0.5f;
             Assert(controller.IsBankOpen && !controller.CanSpin && !controller.CanCashOut, "Bank blocks gameplay while open");
             Assert(((TMP_Text)Get(bank, "emptyText")).gameObject.activeSelf, "Empty bank shows its empty state");
+            Assert(Mathf.Abs(Mathf.DeltaAngle(bankIdleAngle, wheelRect.localEulerAngles.z)) < 0.01f &&
+                Mathf.Abs(Mathf.DeltaAngle(bankPreviewAngle, nextPreview.WheelTransform.localEulerAngles.z)) < 0.01f,
+                "Opening the bank pauses idle rotation without resetting the wheels");
             closeBank.onClick.Invoke();
             Assert(controller.CanSpin, "Closing bank restores gameplay");
 
@@ -159,6 +181,7 @@ namespace VertigoWheelDemo.Editor
             int wonIndex = Array.FindIndex(controller.CurrentSlots, slot => slot.Reward.Type != RewardType.Bomb);
             var won = controller.CurrentSlots[wonIndex];
             int expectedAmount = GameSession.CalculateRewardAmount(won, 1);
+            float heldPreviewAngle = nextPreview.WheelTransform.localEulerAngles.z;
             ForceSpin(wonIndex);
             Assert(controller.IsSpinning && !controller.CanSpin && !controller.CanCashOut, "Spin locks repeat spins and cash-out");
             controller.RequestCashOut();
@@ -167,7 +190,11 @@ namespace VertigoWheelDemo.Editor
             Assert(controller.IsRewardPending && controller.CurrentZone == 1 && !controller.CanSpin, "Reward reveal holds the winning zone and locks input");
             Assert(controller.Rewards[won.Reward] == expectedAmount, "The displayed slot amount equals the awarded bank amount");
             Assert(((Image)Get(reveal, "rewardImage")).sprite == won.Reward.Icon, "Reveal displays the actual won reward icon");
+            float winningAngle = wheelRect.localEulerAngles.z;
             yield return 0.5f;
+            Assert(Mathf.Abs(Mathf.DeltaAngle(winningAngle, wheelRect.localEulerAngles.z)) < 0.01f &&
+                Mathf.Abs(Mathf.DeltaAngle(heldPreviewAngle, nextPreview.WheelTransform.localEulerAngles.z)) < 0.01f,
+                "Real spins and reward reveals pause idle motion and preserve the winning slot");
             Capture("reward-reveal", 1920, 1080);
             Capture("reward-reveal-4x3", 1440, 1080);
             Capture("reward-reveal-20x9", 2400, 1080);
@@ -196,8 +223,19 @@ namespace VertigoWheelDemo.Editor
             Assert(ReferenceEquals(controller.CurrentSlots, expectedNext), "Next-wheel preview becomes the exact playable wheel");
             revealButton.onClick.Invoke();
             Assert(controller.CurrentZone == 2, "Repeated dismissal cannot skip zones");
-            Assert(wheelRect.localRotation == Quaternion.identity, "New wheel starts with the same orientation as its preview");
+            Assert(Mathf.Abs(Mathf.DeltaAngle(wheelRect.localEulerAngles.z, nextPreview.WheelTransform.localEulerAngles.z)) < 1.5f,
+                "Incoming preview aligns smoothly before the new current wheel resumes idle rotation");
+            float previousIdleStart = previousPreview.WheelTransform.localEulerAngles.z;
             yield return 0.2f;
+            Assert(Mathf.Abs(Mathf.DeltaAngle(previousIdleStart, previousPreview.WheelTransform.localEulerAngles.z)) > 0.1f,
+                "The previous wheel also rotates gently while idle");
+            Assert(((Image[])Get(previousPreview, "rewardImages")).All(image =>
+                Mathf.Abs(Mathf.DeltaAngle(image.transform.eulerAngles.z, 0f)) < 0.1f) &&
+                ((Image[])Get(nextPreview, "rewardImages")).All(image =>
+                Mathf.Abs(Mathf.DeltaAngle(image.transform.eulerAngles.z, 0f)) < 0.1f) &&
+                ((Image[])Get(Object.FindFirstObjectByType<WheelContentView>(), "rewardImages")).All(image =>
+                Mathf.Abs(Mathf.DeltaAngle(image.transform.eulerAngles.z, 0f)) < 0.1f),
+                "Current and preview reward icons and their child amounts remain upright during idle rotation");
             Capture("adjacent-wheels", 1920, 1080);
             Capture("adjacent-wheels-4x3", 1440, 1080);
             Capture("adjacent-wheels-20x9", 2400, 1080);

@@ -14,6 +14,7 @@ A Unity wheel-of-fortune game developed for the Vertigo Games internship case.
 
 - [x] Eight-slot wheel with DOTween spin animation, a fixed center spin button, and input locking during spins and modal windows.
 - [x] Previous and next wheel previews; the next preview becomes the exact next playable layout.
+- [x] Gentle in-place idle rotation for the current and adjacent wheels, with upright rewards and fixed controls. Idle motion pauses during spins, reveals, transitions, and bank inspection.
 - [x] Smooth 0.74-second carousel transitions with slide/scale/fade animation, fixed button layout, and input locking until completion.
 - [x] Dark gradient background with resolution-independent decorative geometry.
 - [x] All 35 supplied non-bomb reward icons configured as obtainable rewards, plus the bomb.

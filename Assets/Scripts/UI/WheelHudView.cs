@@ -8,6 +8,7 @@ namespace VertigoWheelDemo.UI
     public sealed class WheelHudView : MonoBehaviour
     {
         [SerializeField] private GameSessionController sessionController;
+        [SerializeField] private WheelSpinView currentWheel;
         [SerializeField] private WheelPreviewView previousWheel;
         [SerializeField] private WheelPreviewView nextWheel;
         [SerializeField] private TMP_Text zoneText;
@@ -30,6 +31,9 @@ namespace VertigoWheelDemo.UI
         private void OnDisable()
         {
             sessionController.StateChanged -= Refresh;
+            currentWheel.SetIdleRotation(false);
+            previousWheel.SetIdleRotation(false);
+            nextWheel.SetIdleRotation(false);
         }
 
         private void Refresh()
@@ -47,6 +51,11 @@ namespace VertigoWheelDemo.UI
             bankCountText.text = $"{sessionController.Rewards.Count} ÇEŞİT ÖDÜL";
             previousWheel.Show(sessionController.PreviousDefinition, sessionController.PreviousSlots, zone - 1, sessionController.PreviousWheelAngle);
             nextWheel.Show(sessionController.NextDefinition, sessionController.NextSlots, zone + 1);
+
+            bool idle = sessionController.CanSpin;
+            currentWheel.SetIdleRotation(idle);
+            previousWheel.SetIdleRotation(idle);
+            nextWheel.SetIdleRotation(idle);
 
             bool ended = sessionController.IsGameOver;
             restartButton.SetActive(ended && !sessionController.IsRewardPending);

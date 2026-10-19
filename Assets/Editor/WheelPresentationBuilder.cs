@@ -115,7 +115,7 @@ namespace VertigoWheelDemo.Editor
                 BuildReveal(canvas.transform, controller);
 
                 var hud = canvas.gameObject.GetComponent<WheelHudView>() ?? canvas.gameObject.AddComponent<WheelHudView>();
-                Set(hud, "sessionController", controller, "previousWheel", previous, "nextWheel", next,
+                Set(hud, "sessionController", controller, "currentWheel", spinView, "previousWheel", previous, "nextWheel", next,
                     "zoneText", zone, "zoneKindText", kind, "hintText", hint, "bankCountText", count,
                     "cashOutImage", cashOut.targetGraphic, "cashOutText", cashOut.GetComponentInChildren<TMP_Text>(),
                     "availableButton", Sprite("UI_button_orange_standard"), "unavailableButton", Sprite("UI_button_grey_standard"),

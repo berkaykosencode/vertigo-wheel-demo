@@ -78,6 +78,7 @@ namespace VertigoWheelDemo.UI
                 .Join(currentGroup.DOFade(previousAlpha, slideDuration))
                 .Join(next.DOAnchorPos(incomingTarget, slideDuration).SetEase(Ease.InOutCubic))
                 .Join(next.DOScale(incomingScale, slideDuration).SetEase(Ease.InOutCubic))
+                .Join(nextWheel.WheelTransform.DOLocalRotate(Vector3.zero, slideDuration).SetEase(Ease.InOutCubic))
                 .Join(nextWheel.Group.DOFade(1, slideDuration))
                 .Join(previous.DOAnchorPos(previousPosition + new Vector2(-180, -30), slideDuration).SetEase(Ease.InOutCubic))
                 .Join(previous.DOScale(0.78f, slideDuration).SetEase(Ease.InOutCubic))

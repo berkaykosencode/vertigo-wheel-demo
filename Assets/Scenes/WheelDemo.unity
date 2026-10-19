@@ -338,6 +338,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8652170396264536320, guid: d12597d997ce8405d98ad609f7656928, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8895166056103322069, guid: d12597d997ce8405d98ad609f7656928, type: 3}
       propertyPath: m_Name
       value: game_wheel

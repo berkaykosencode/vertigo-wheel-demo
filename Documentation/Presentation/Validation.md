@@ -4,6 +4,9 @@ Unity 6000.3.23f1. Executed in Play mode against the scene prefab and actual UI 
 
 - PASS: Scene starts ready to spin
 - PASS: Spin button is centered on the wheel and has a separate non-rotating transform
+- PASS: Ready current and next wheels rotate gently in place
+- PASS: Idle rotation leaves wheel positions and the center button fixed
+- PASS: Refreshing the HUD preserves an unchanged preview's idle angle
 - PASS: bronze produces varied eight-slot layouts with distinct rewards and correct bomb count
 - PASS: bronze pool entries are all reachable
 - PASS: silver produces varied eight-slot layouts with distinct rewards and correct bomb count
@@ -15,11 +18,13 @@ Unity 6000.3.23f1. Executed in Play mode against the scene prefab and actual UI 
 - PASS: Inline reward totals have been replaced by the bank
 - PASS: Bank blocks gameplay while open
 - PASS: Empty bank shows its empty state
+- PASS: Opening the bank pauses idle rotation without resetting the wheels
 - PASS: Closing bank restores gameplay
 - PASS: Spin locks repeat spins and cash-out
 - PASS: Reward reveal holds the winning zone and locks input
 - PASS: The displayed slot amount equals the awarded bank amount
 - PASS: Reveal displays the actual won reward icon
+- PASS: Real spins and reward reveals pause idle motion and preserve the winning slot
 - PASS: Dismissing a reward starts a locked carousel transition
 - PASS: Bank, reset and repeat-spin requests cannot interrupt a transition
 - PASS: Current wheel slides left and shrinks while the next wheel grows toward the center
@@ -28,7 +33,9 @@ Unity 6000.3.23f1. Executed in Play mode against the scene prefab and actual UI 
 - PASS: Carousel completes with restored poses and unlocked gameplay
 - PASS: Next-wheel preview becomes the exact playable wheel
 - PASS: Repeated dismissal cannot skip zones
-- PASS: New wheel starts with the same orientation as its preview
+- PASS: Incoming preview aligns smoothly before the new current wheel resumes idle rotation
+- PASS: The previous wheel also rotates gently while idle
+- PASS: Current and preview reward icons and their child amounts remain upright during idle rotation
 - PASS: Bank renders the won reward as an icon/name/quantity row
 - PASS: Zone 5 uses a bomb-free silver wheel and permits cash-out before spinning
 - PASS: Cash-out ends the session and retains its bank
